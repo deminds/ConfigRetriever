@@ -25,7 +25,7 @@ namespace GH.DD.ConfigRetriever
             if (!CanFloatUp)
                 yield break;
 
-            for (var i = Path.Count; i < 0; i--)
+            for (var i = Path.Count - 1; i >= 0; i--)
             {
                 yield return new ConfigElement(
                     Name, 

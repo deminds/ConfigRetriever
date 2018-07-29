@@ -8,12 +8,12 @@ namespace GH.DD.ConfigRetriever.Attributes
     {
         public IList<string> Path { get; }
 
-        public ConfigRetrieverPathAttribute(IList<string> path)
+        public ConfigRetrieverPathAttribute(params string[] pathLevels)
         {
-            if (!IsValid(path))
+            if (!IsValid(pathLevels))
                 throw new ArgumentException("Some path of Path list is null or empty");
-
-            Path = path;
+            
+            Path = pathLevels;
         }
 
         private bool IsValid(IList<string> path)

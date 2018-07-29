@@ -38,23 +38,32 @@ namespace GH.DD.ConfigRetriever
             {
                 if (!property.CanRead || !property.CanWrite)
                     continue;
+                
+                if(!property.GetMethod.IsPublic || !property.SetMethod.IsPublic)
+                    continue;
+                
+                var propertyType = property.PropertyType;
+                if (!propertyType.IsClass && !propertyType.IsValueType && !(propertyType != typeof(string)))
+                    continue;
 
                 if (property.HasAttribute<ConfigRetrieverIgnoreAttribute>())
                     continue;
+                
+                var nameConfigProperty = property.Name;
 
                 var path = basePath;
                 if (property.HasAttribute<ConfigRetrieverPathAttribute>())
                 {
                     path = property.GetAttributeValue((ConfigRetrieverPathAttribute a) => a.Path, true);
                 }
+                
+                var name = property.Name;
+                if (property.HasAttribute<ConfigRetrieverElementNameAttribute>())
+                {
+                    name = property.GetAttributeValue((ConfigRetrieverElementNameAttribute a) => a.Name, true);
+                }
 
                 var canFloatUp = property.HasAttribute<ConfigRetrieverCanFloatUpAttribute>();
-
-                var propertyType = property.PropertyType;
-                var nameConfigProperty = propertyType.Name;
-                var name = nameConfigProperty;
-                if (propertyType.IsValueType)
-                    name = property.Name;
 
                 yield return new ConfigElement(
                     name: name,
