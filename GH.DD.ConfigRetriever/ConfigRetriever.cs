@@ -11,17 +11,18 @@ namespace GH.DD.ConfigRetriever
     {
         private IRetriever _retriever;
         private TItem _configItem;
+        private IConfigWalker _walker;
         
         public ConfigRetriever(IRetriever retriever)
         {
             _retriever = retriever ?? throw new ArgumentNullException(nameof(retriever));
             _configItem = new TItem();
+            _walker = new ConfigWalker<TItem>();
         }
 
         public TItem Fill()
         {
-            var walker = new ConfigWalker<TItem>();
-            foreach (var configElement in walker.Walk())
+            foreach (var configElement in _walker.Walk())
             {
                 string value = null;
                 if (!_retriever.TryRetrieve(configElement, out value))
@@ -37,7 +38,15 @@ namespace GH.DD.ConfigRetriever
                     continue;
 
                 var converter = TypeDescriptor.GetConverter(configElement.ElementType);
-                var valueCasted = converter.ConvertFromInvariantString(value);
+                object valueCasted;
+                try
+                {
+                     valueCasted = converter.ConvertFromInvariantString(value);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidCastException($"Error cast {configElement} value: {value}", e);
+                }
                 
                 var propertyInfo = typeof(TItem).GetProperty(configElement.NameConfigProperty);
                 
