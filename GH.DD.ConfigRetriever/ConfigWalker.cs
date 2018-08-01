@@ -7,7 +7,7 @@ using GH.DD.ConfigRetriever.Helpers;
 namespace GH.DD.ConfigRetriever
 {
     // todo: mark some elements as internal
-    public class ConfigWalker<TItem> 
+    public class ConfigWalker<TItem> : IConfigWalker
         where TItem : class 
     {
         private IList<string> GetBasePath()
