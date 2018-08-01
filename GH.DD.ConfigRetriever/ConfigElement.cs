@@ -16,7 +16,8 @@ namespace GH.DD.ConfigRetriever
             if (elementType != typeof(string) &&
                 elementType != typeof(int) &&
                 elementType != typeof(long) &&
-                elementType != typeof(double))
+                elementType != typeof(double) &&
+                elementType != typeof(bool))
                 throw new ArgumentException($"ConfigElement field ElementType must be: string, int, long or double. ElementType is {elementType}");
             
             Name = name ?? throw new ArgumentNullException(nameof(name));
