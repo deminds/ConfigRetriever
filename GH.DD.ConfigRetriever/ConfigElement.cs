@@ -42,5 +42,10 @@ namespace GH.DD.ConfigRetriever
                     CanFloatUp);
             }
         }
+
+        public override string ToString()
+        {
+            return $"Name: {Name}, NameConfigProperty: {NameConfigProperty}, CanFloatUp: {CanFloatUp}, ElementType: {ElementType}, Path: {string.Join(",", Path)}";
+        }
     }
 }
