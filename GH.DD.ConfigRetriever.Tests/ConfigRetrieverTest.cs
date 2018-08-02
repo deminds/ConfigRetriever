@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Linq;
 using FluentAssertions;
 using GH.DD.ConfigRetriever.Attributes;
 using Moq;
@@ -12,7 +12,7 @@ namespace GH.DD.ConfigRetriever.Tests
         [Test]
         public void Fill_AvailableInRetriever()
         {
-            var value = "true";
+            string value;
             
             var configElements = new List<ConfigElement>()
             {
@@ -32,19 +32,11 @@ namespace GH.DD.ConfigRetriever.Tests
                     elementType: typeof(bool),
                     canFloatUp: false),
                 
-                // not found
-                new ConfigElement(
-                    name: "BoolProp3",
-                    nameConfigProperty: "BoolProp3",
-                    path: new List<string>() {"FirstPathLevel", "SecondPathLevel", "TestConfig"},
-                    elementType: typeof(bool),
-                    canFloatUp: true),
-                
                 // found
                 new ConfigElement(
                     name: "BoolProp3",
                     nameConfigProperty: "BoolProp3",
-                    path: new List<string>() {"FirstPathLevel", "SecondPathLevel"},
+                    path: new List<string>() {"FirstPathLevel", "SecondPathLevel", "TestConfig"},
                     elementType: typeof(bool),
                     canFloatUp: true),
                 
@@ -56,40 +48,51 @@ namespace GH.DD.ConfigRetriever.Tests
                     elementType: typeof(bool),
                     canFloatUp: true),
                 
-                // not found
-                new ConfigElement(
-                    name: "BoolProp4",
-                    nameConfigProperty: "BoolProp4",
-                    path: new List<string>() {},
-                    elementType: typeof(bool),
-                    canFloatUp: true),
-                
-                // not found
-                new ConfigElement(
-                    name: "BoolProp5",
-                    nameConfigProperty: "BoolProp5",
-                    path: new List<string>() {"TestConfig"},
-                    elementType: typeof(bool),
-                    canFloatUp: true),
-                
                 // found
                 new ConfigElement(
                     name: "BoolProp5",
                     nameConfigProperty: "BoolProp5",
-                    path: new List<string>() {"FirstPathLevel", "SecondPathLevel", "TestConfig"},
+                    path: new List<string>() {"TestConfig"},
                     elementType: typeof(bool),
                     canFloatUp: true),
             };
             
             var retrieverMock = new Mock<IRetriever>();
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[0], out value)).Returns(false);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[1], out value)).Returns(true);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[2], out value)).Returns(false);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[3], out value)).Returns(true);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[4], out value)).Returns(false);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[5], out value)).Returns(false);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[6], out value)).Returns(false);
-            retrieverMock.Setup(retriever => retriever.TryRetrieve(configElements[7], out value)).Returns(true);
+            value = null;
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[0].Name && e.Path.SequenceEqual(configElements[0].Path)), 
+                out value)).Returns(false);
+            
+            value = "true";
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[1].Name && e.Path.SequenceEqual(configElements[1].Path)), 
+                out value)).Returns(true);
+            
+            value = null;
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[2].Name && e.Path.SequenceEqual(configElements[2].Path)), 
+                out value)).Returns(false);
+            
+            value = "true";
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[2].Name && e.Path.SequenceEqual(configElements[2].Path.GetRange(0, configElements[2].Path.Count-1))), 
+                out value)).Returns(true);
+            
+            value = null;
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[3].Name && e.Path.SequenceEqual(configElements[3].Path)), 
+                out value)).Returns(false);
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[3].Name && e.Path.SequenceEqual(configElements[3].Path.GetRange(0, configElements[3].Path.Count-1))), 
+                out value)).Returns(false);
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[4].Name && e.Path.SequenceEqual(configElements[4].Path)), 
+                out value)).Returns(false);
+            
+            value = "true";
+            retrieverMock.Setup(retriever => retriever.TryRetrieve(
+                It.Is<ConfigElement>(e => e.Name==configElements[4].Name && e.Path.SequenceEqual(configElements[4].Path.GetRange(0, configElements[4].Path.Count-1))), 
+                out value)).Returns(true);
 
             var walkerMock = new Mock<IConfigWalker>();
             walkerMock.Setup(w => w.Walk()).Returns(configElements);
@@ -105,7 +108,7 @@ namespace GH.DD.ConfigRetriever.Tests
             {
                 BoolProp1 = false,
                 BoolProp2 = true,
-                BoolProp3 = false,
+                BoolProp3 = true,
                 BoolProp4 = false,
                 BoolProp5 = true
             };

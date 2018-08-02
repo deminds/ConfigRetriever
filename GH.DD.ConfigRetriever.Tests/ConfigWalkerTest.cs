@@ -100,7 +100,7 @@ namespace GH.DD.ConfigRetriever.Tests
                 new ConfigElement(
                     "SomeIntProp",
                     "IntProp",
-                    new List<string>() {},
+                    new List<string>(),
                     typeof(int),
                     false
                 ),
@@ -139,7 +139,7 @@ namespace GH.DD.ConfigRetriever.Tests
                 new ConfigElement(
                     "SomeIntProp",
                     "IntProp",
-                    new List<string>() {},
+                    new List<string>(),
                     typeof(int),
                     false
                 ),
@@ -178,7 +178,7 @@ namespace GH.DD.ConfigRetriever.Tests
                 new ConfigElement(
                     "SomeIntProp",
                     "IntProp",
-                    new List<string>() {},
+                    new List<string>(),
                     typeof(int),
                     false
                 ),
@@ -217,7 +217,7 @@ namespace GH.DD.ConfigRetriever.Tests
                 new ConfigElement(
                     "SomeIntProp",
                     "IntProp",
-                    new List<string>() {},
+                    new List<string>(),
                     typeof(int),
                     false
                 ),

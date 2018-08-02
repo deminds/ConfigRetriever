@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
-using System.Text;
 
 namespace GH.DD.ConfigRetriever
 {
@@ -24,12 +21,12 @@ namespace GH.DD.ConfigRetriever
         {
             foreach (var configElement in _walker.Walk())
             {
-                string value = null;
+                string value;
                 if (!_retriever.TryRetrieve(configElement, out value))
                 {
                     foreach (var elementFloatUp in configElement.FloatUp())
                     {
-                        if (_retriever.TryRetrieve(configElement, out value))
+                        if (_retriever.TryRetrieve(elementFloatUp, out value))
                             break;
                     }
                 }
