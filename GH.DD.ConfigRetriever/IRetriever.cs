@@ -1,7 +1,9 @@
-﻿namespace GH.DD.ConfigRetriever
+﻿using System.Collections.Generic;
+
+namespace GH.DD.ConfigRetriever
 {
     public interface IRetriever
     {
-        bool TryRetrieve(ConfigElement element, out string value);
+        bool TryRetrieve(IList<string> path, out string value);
     }
 }
