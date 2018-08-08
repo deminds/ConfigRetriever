@@ -5,13 +5,15 @@ namespace GH.DD.ConfigRetriever
 {
     public class ConfigElement
     {
-        public string Name { private set; get; }
-        public string NameConfigProperty { private set; get; }
-        public List<string> Path { private set; get; }
+        // last element is name
+        // higher index - higher priority
+        public List<List<string>> Paths { private set; get; }
+        public List<string> PathInConfigObject { private set; get; }
         public Type ElementType { private set; get; }
-        public bool CanFloatUp { private set; get; }
 
-        public ConfigElement(string name, string nameConfigProperty, List<string> path, Type elementType, bool canFloatUp)
+        public ConfigElement(List<List<string>> paths, 
+                             List<string> pathInConfigObject,
+                             Type elementType)
         {
             if (elementType != typeof(string) &&
                 elementType != typeof(int) &&
@@ -20,32 +22,22 @@ namespace GH.DD.ConfigRetriever
                 elementType != typeof(bool))
                 throw new ArgumentException($"ConfigElement field ElementType must be: string, int, long or double. ElementType is {elementType}");
             
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            NameConfigProperty = nameConfigProperty ?? throw new ArgumentNullException(nameof(nameConfigProperty));
-            Path = path ?? throw new ArgumentNullException(nameof(path));
-            CanFloatUp = canFloatUp;
+            Paths = paths ?? throw new ArgumentNullException(nameof(paths));
             ElementType = elementType;
         }
 
-        public IEnumerable<ConfigElement> FloatUp()
+        public IEnumerable<List<string>> GetNextPath()
         {
-            if (!CanFloatUp)
-                yield break;
-
-            for (var i = Path.Count - 1; i >= 0; i--)
+            for (var i = Paths.Count - 1; i >= 0; i--)
             {
-                yield return new ConfigElement(
-                    Name, 
-                    NameConfigProperty, 
-                    Path.GetRange(0, i), 
-                    ElementType, 
-                    CanFloatUp);
+                yield return Paths[i];
             }
         }
 
         public override string ToString()
         {
-            return $"Name: {Name}, NameConfigProperty: {NameConfigProperty}, CanFloatUp: {CanFloatUp}, ElementType: {ElementType}, Path: {string.Join(",", Path)}";
+            // todo: need check
+            return $"ElementType: {ElementType}, Paths: {string.Join(":", string.Join(",", Paths))}";
         }
     }
 }

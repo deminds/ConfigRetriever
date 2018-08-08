@@ -21,53 +21,37 @@ namespace GH.DD.ConfigRetriever
         {
             foreach (var configElement in _walker.Walk())
             {
-                string value;
-                if (!_retriever.TryRetrieve(configElement, out value))
+                var value = "";
+                foreach (var path in configElement.GetNextPath())
                 {
-                    foreach (var elementFloatUp in configElement.FloatUp())
-                    {
-                        if (_retriever.TryRetrieve(elementFloatUp, out value))
-                            break;
-                    }
+                    if (_retriever.TryRetrieve(path, out value))
+                        break;
                 }
                 
                 if (string.IsNullOrEmpty(value))
                     continue;
 
-                var converter = TypeDescriptor.GetConverter(configElement.ElementType);
-                object valueCasted;
-                try
-                {
-                     valueCasted = converter.ConvertFromInvariantString(value);
-                }
-                catch (Exception e)
-                {
-                    throw new InvalidCastException($"Error cast {configElement} value: {value}", e);
-                }
-                
-                var propertyInfo = typeof(TItem).GetProperty(configElement.NameConfigProperty);
-                
-                if (propertyInfo == null)
-                    throw new NullReferenceException($"Property: {configElement.NameConfigProperty} not found");
-                
-                propertyInfo.SetValue(_configItem, valueCasted);
+                // move to mapper
+//                var converter = TypeDescriptor.GetConverter(configElement.ElementType);
+//                object valueCasted;
+//                try
+//                {
+//                     valueCasted = converter.ConvertFromInvariantString(value);
+//                }
+//                catch (Exception e)
+//                {
+//                    throw new InvalidCastException($"Error cast {configElement} value: {value}", e);
+//                }
+//                
+//                var propertyInfo = typeof(TItem).GetProperty(configElement.NameConfigProperty);
+//                
+//                if (propertyInfo == null)
+//                    throw new NullReferenceException($"Property: {configElement.NameConfigProperty} not found");
+//                
+//                propertyInfo.SetValue(_configItem, valueCasted);
             }
 
             return _configItem;
-        }
-        
-        private static T CastAs<T>(object obj) where T: class, new()
-        {
-            return obj as T;
-        }
-        
-    }
-
-    public static class ConvertHelper
-    {
-        public static T ChangeType<T>(this object obj)
-        {
-            return (T)Convert.ChangeType(obj, typeof(T));
         }
     }
 }
