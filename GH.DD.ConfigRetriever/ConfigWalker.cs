@@ -107,7 +107,7 @@ namespace GH.DD.ConfigRetriever
 
         private IList<string> GetBasePathInConfigObject()
         {
-            if (BasePathInConfigObject != null)
+            if (BasePathInConfigObject != null && BasePathInConfigObject.Count > 0)
                 return BasePathInConfigObject;
 
             var name = typeof(TItem).Name;
