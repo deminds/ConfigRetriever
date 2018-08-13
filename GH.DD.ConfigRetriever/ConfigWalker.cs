@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Schema;
 using GH.DD.ConfigRetriever.Attributes;
 using GH.DD.ConfigRetriever.Helpers;
 
@@ -10,7 +9,7 @@ namespace GH.DD.ConfigRetriever
 {
     // todo: mark some elements as internal
     public class ConfigWalker<TItem> : IConfigWalker
-        where TItem : class
+        where TItem : class, new()
     {
         // paths with current TItem name
         public List<List<string>> BasePaths { private set; get; }

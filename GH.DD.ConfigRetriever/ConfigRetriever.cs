@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace GH.DD.ConfigRetriever
 {
@@ -7,51 +6,41 @@ namespace GH.DD.ConfigRetriever
         where TItem : class, new()
     {
         private IRetriever _retriever;
-        private TItem _configItem;
         private IConfigWalker _walker;
+        private ConvertProvider _convertProvider;
+        private IConfigMapper _configMapper;
         
         public ConfigRetriever(IRetriever retriever)
         {
             _retriever = retriever ?? throw new ArgumentNullException(nameof(retriever));
-            _configItem = new TItem();
             _walker = new ConfigWalker<TItem>();
+            _convertProvider = new ConvertProvider();
+            _configMapper = new ConfigMapper<TItem>();
         }
 
         public TItem Fill()
         {
             foreach (var configElement in _walker.Walk())
             {
-                var value = "";
+                var rawValue = "";
                 foreach (var path in configElement.GetNextPath())
                 {
-                    if (_retriever.TryRetrieve(path, out value))
+                    if (_retriever.TryRetrieve(path, out rawValue))
                         break;
                 }
                 
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(rawValue))
                     continue;
 
-                // move to mapper
-//                var converter = TypeDescriptor.GetConverter(configElement.ElementType);
-//                object valueCasted;
-//                try
-//                {
-//                     valueCasted = converter.ConvertFromInvariantString(value);
-//                }
-//                catch (Exception e)
-//                {
-//                    throw new InvalidCastException($"Error cast {configElement} value: {value}", e);
-//                }
-//                
-//                var propertyInfo = typeof(TItem).GetProperty(configElement.NameConfigProperty);
-//                
-//                if (propertyInfo == null)
-//                    throw new NullReferenceException($"Property: {configElement.NameConfigProperty} not found");
-//                
-//                propertyInfo.SetValue(_configItem, valueCasted);
+                var value = _convertProvider
+                                .GetConverter(configElement.ElementType)
+                                .Convert(rawValue);
+
+                _configMapper.Map(configElement.PathInConfigObject, value);
+
             }
 
-            return _configItem;
+            return (TItem)_configMapper.GetResultObject();
         }
     }
 }
