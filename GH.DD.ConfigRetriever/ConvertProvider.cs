@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GH.DD.ConfigRetriever.Converters;
 
 namespace GH.DD.ConfigRetriever
 {
@@ -28,8 +29,13 @@ namespace GH.DD.ConfigRetriever
             
             _converters.Add(convertToType, converter);
         }
-        
+
         private void RegisterStandartConverters()
-        {}
+        {
+            RegisterConverter(typeof(int), new StringToIntConverter());
+            RegisterConverter(typeof(long), new StringToLongConverter());
+            RegisterConverter(typeof(double), new StringToDoubleConverter());
+            RegisterConverter(typeof(bool), new StringToBoolConverter());
+        }
     }
 }
