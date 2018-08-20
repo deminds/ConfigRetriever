@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GH.DD.ConfigRetriever
 {
@@ -23,6 +24,7 @@ namespace GH.DD.ConfigRetriever
                 throw new ArgumentException($"ConfigElement field ElementType must be: string, int, long or double. ElementType is {elementType}");
             
             Paths = paths ?? throw new ArgumentNullException(nameof(paths));
+            PathInConfigObject = pathInConfigObject ?? throw new ArgumentNullException(nameof(pathInConfigObject));
             ElementType = elementType;
         }
 
@@ -37,7 +39,9 @@ namespace GH.DD.ConfigRetriever
         public override string ToString()
         {
             // todo: need check
-            return $"ElementType: {ElementType}, Paths: {string.Join(":", string.Join(",", Paths))}";
+            return $"ElementType: {ElementType}, " +
+                   $"PathInConfigObject: {string.Join("/", PathInConfigObject)}, " +
+                   $"Paths: {string.Join("/", Paths.SelectMany(s => s))}";
         }
     }
 }

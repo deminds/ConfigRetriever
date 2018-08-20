@@ -23,11 +23,18 @@ namespace GH.DD.ConfigRetriever
             foreach (var configElement in _walker.Walk())
             {
                 var rawValue = "";
+                var configElementWasFound = false; 
                 foreach (var path in configElement.GetNextPath())
                 {
-                    if (_retriever.TryRetrieve(path, out rawValue))
-                        break;
+                    if (!_retriever.TryRetrieve(path, out rawValue)) 
+                        continue;
+                    
+                    configElementWasFound = true;
+                    break;
                 }
+                
+                if (!configElementWasFound)
+                    throw new EntryPointNotFoundException($"Config element not found. ConfigElement: {configElement}");
                 
                 if (string.IsNullOrEmpty(rawValue))
                     continue;

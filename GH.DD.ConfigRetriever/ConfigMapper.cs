@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GH.DD.ConfigRetriever.Helpers;
 
 namespace GH.DD.ConfigRetriever
 {
@@ -26,7 +25,8 @@ namespace GH.DD.ConfigRetriever
                 var propertyName = child.Key;
                 var childConfigMapper = child.Value;
 
-                var propertyInfo = typeof(TItem).GetPropertyInfo(propertyName);
+                var propertyInfo = typeof(TItem).GetProperty(propertyName)
+                    ?? throw new NullReferenceException($"Property: {propertyName} not found in {typeof(TItem).Name}");
                 
                 propertyInfo.SetValue(_config, childConfigMapper.GetResultObject());
             }
@@ -44,7 +44,8 @@ namespace GH.DD.ConfigRetriever
                                                 $"Mapper must have path with count gt 2");
             
             var propertyName = path[1];
-            var propertyInfo = typeof(TItem).GetPropertyInfo(propertyName);
+            var propertyInfo = typeof(TItem).GetProperty(propertyName)
+                    ?? throw new NullReferenceException($"Property: {propertyName} not found in {typeof(TItem).Name}");
             
             if (path.Count == 2)
             {
@@ -52,19 +53,19 @@ namespace GH.DD.ConfigRetriever
                 return;
             }
 
-            var propetyType = propertyInfo.PropertyType;
-            if (!propetyType.IsClass)
+            var propertyType = propertyInfo.PropertyType;
+            if (propertyType.IsPrimitive || (propertyType == typeof(string)))
             {
                 throw new MemberAccessException($"Error. Try map value of nested element of non class property. " +
-                                                $"PropertyType: {propetyType.Name}. Path: {path}. Value: {value}");
+                                                $"PropertyType: {propertyType.Name}. Path: {path}. Value: {value}");
             }
             
             var nestedPath = path.ToList();
             nestedPath.RemoveAt(0);
 
-            if (_children.ContainsKey(propertyName))
+            if (!_children.ContainsKey(propertyName))
             {
-                var typeArgs = new[] {propetyType};
+                var typeArgs = new[] {propertyType};
                 var configMapperType = typeof(ConfigMapper<>).MakeGenericType(typeArgs);
 
                 var configMapper = (IConfigMapper) Activator.CreateInstance(configMapperType);

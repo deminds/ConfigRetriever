@@ -4,6 +4,7 @@ using GH.DD.ConfigRetriever.Converters;
 
 namespace GH.DD.ConfigRetriever
 {
+    // ToDo: may be IConverter to delegate
     public class ConvertProvider
     {
         private Dictionary<Type, IConverter> _converters;
@@ -36,6 +37,7 @@ namespace GH.DD.ConfigRetriever
             RegisterConverter(typeof(long), new StringToLongConverter());
             RegisterConverter(typeof(double), new StringToDoubleConverter());
             RegisterConverter(typeof(bool), new StringToBoolConverter());
+            RegisterConverter(typeof(string), new StringToStringConverter());
         }
     }
 }

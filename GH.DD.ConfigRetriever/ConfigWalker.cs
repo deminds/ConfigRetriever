@@ -52,6 +52,12 @@ namespace GH.DD.ConfigRetriever
                 var propertyType = property.PropertyType;
                 if (property.HasAttribute<ConfigRetrieverIgnoreAttribute>())
                     continue;
+                
+                if (propertyType.IsGenericType && 
+                    propertyType.IsGenericTypeDefinition &&
+                    propertyType.IsInterface &&
+                    propertyType.IsEnum)
+                    continue;
 
                 var nameConfigProperty = property.Name;
                 var pathInConfigObject = basePathInConfigObject.ToList();
@@ -72,17 +78,32 @@ namespace GH.DD.ConfigRetriever
                 }
                 else
                 {
-                    paths = basePaths.ToList();
+                    foreach (var path in basePaths)
+                    {
+                        paths.Add(path.ToList());
+                    }
+                    
                 }
 
                 if (property.HasAttribute<ConfigRetrieverFailbackPathAttribute>())
                 {
                     var failbackPath = property.GetAttributeValue((ConfigRetrieverFailbackPathAttribute a) => a.FailbackPath, true).ToList();
-                    failbackPath.Add(name);
                     paths.Insert(0, failbackPath);
                 }
 
-                if (propertyType.IsClass)
+                foreach (var path in paths)
+                {
+                    path.Add(name);
+                }
+
+                if (propertyType.IsPrimitive || propertyType == typeof(string))
+                {
+                    yield return new ConfigElement(
+                        paths: paths,
+                        pathInConfigObject: pathInConfigObject,
+                        elementType: propertyType);
+                }
+                else
                 {
                     var typeArgs = new[] {propertyType};
                     var configWalkerType = typeof(ConfigWalker<>).MakeGenericType(typeArgs);
@@ -93,13 +114,6 @@ namespace GH.DD.ConfigRetriever
                     {
                         yield return configElement;
                     }
-                }
-                else
-                {
-                    yield return new ConfigElement(
-                        paths: paths,
-                        pathInConfigObject: pathInConfigObject,
-                        elementType: propertyType);
                 }
             }
         }

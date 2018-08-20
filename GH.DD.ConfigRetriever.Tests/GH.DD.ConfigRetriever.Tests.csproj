@@ -13,4 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\GH.DD.ConfigRetriever\GH.DD.ConfigRetriever.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="ConfigElementTest.cs" />
+    <Compile Remove="ConfigWalkerTest.cs" />
+  </ItemGroup>
 </Project>

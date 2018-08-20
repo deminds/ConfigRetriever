@@ -227,7 +227,6 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
         [ConfigRetrieverPath("FirstLevelPath", "SecondLevelPath")]
         private class TestClassWithAttr
         {
-            [ConfigRetrieverCanFloatUp]
             [ConfigRetrieverIgnore]
             [ConfigRetrieverElementName("SomeNameOfProp")]
             [ConfigRetrieverPath("FirstLevelPath", "SecondLevelPath")]
