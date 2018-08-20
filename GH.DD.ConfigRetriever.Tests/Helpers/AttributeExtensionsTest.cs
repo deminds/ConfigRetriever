@@ -230,6 +230,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
             [ConfigRetrieverIgnore]
             [ConfigRetrieverElementName("SomeNameOfProp")]
             [ConfigRetrieverPath("FirstLevelPath", "SecondLevelPath")]
+            [ConfigRetrieverFailbackPath("FailbackFirstLevelPath", "FailbackSecondLevelPath")]
             public string Prop { set; get; }
         }
 
@@ -243,6 +244,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
         {
             [ConfigRetrieverElementName("  ")]
             [ConfigRetrieverPath("FirstLevelPath", "    ")]
+            [ConfigRetrieverFailbackPath("FailbackFirstLevelPath", "    ")]
             public string Prop { set; get; }
         }
 
@@ -250,6 +252,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
         private class TestClassEmptyPathAttr
         {
             [ConfigRetrieverPath] 
+            [ConfigRetrieverFailbackPath] 
             public string Prop { set; get; }
         }
         
