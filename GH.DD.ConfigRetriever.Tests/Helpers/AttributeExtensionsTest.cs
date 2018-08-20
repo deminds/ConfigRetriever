@@ -30,10 +30,10 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
                 .GetProperty(nameof(TestClassEmptyPathAttr.Prop));
         }
 
-        #region HasAttribute
+        #region HasAttribute_Name
 
         [Test]
-        public void HasAttribute_Class_True()
+        public void HasAttribute_Name_Class_True()
         {
             var result = typeof(TestClassWithAttr).HasAttribute<ConfigRetrieverElementNameAttribute>();
             const bool expected = true;
@@ -42,7 +42,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
         }
 
         [Test]
-        public void HasAttribute_Class_False()
+        public void HasAttribute_Name_Class_False()
         {
             var result = typeof(TestClassWithoutAttr).HasAttribute<ConfigRetrieverElementNameAttribute>();
             const bool expected = false;
@@ -51,7 +51,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
         }
 
         [Test]
-        public void HasAttribute_Prop_True()
+        public void HasAttribute_Name_Prop_True()
         {
             var result = _propertyInfoWithAttr.HasAttribute<ConfigRetrieverElementNameAttribute>();
             const bool expected = true;
@@ -60,7 +60,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
         }
 
         [Test]
-        public void HasAttribute_Prop_False()
+        public void HasAttribute_Name_Prop_False()
         {
             var result = _propertyInfoWithoutAttr.HasAttribute<ConfigRetrieverElementNameAttribute>();
             const bool expected = false;
@@ -68,7 +68,38 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
             Assert.AreEqual(expected, result);
         }
 
-        #endregion HasAttribute
+        #endregion HasAttribute_Name
+        
+        #region HasAttribute_Ignore
+
+        [Test]
+        public void HasAttribute_Ignore_Class_False()
+        {
+            var result = typeof(TestClassWithoutAttr).HasAttribute<ConfigRetrieverIgnoreAttribute>();
+            const bool expected = false;
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void HasAttribute_Ignore_Prop_True()
+        {
+            var result = _propertyInfoWithAttr.HasAttribute<ConfigRetrieverIgnoreAttribute>();
+            const bool expected = true;
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void HasAttribute_Ignore_Prop_False()
+        {
+            var result = _propertyInfoWithoutAttr.HasAttribute<ConfigRetrieverIgnoreAttribute>();
+            const bool expected = false;
+
+            Assert.AreEqual(expected, result);
+        }
+
+        #endregion HasAttribute_Ignore
 
         #region GetAttributeValue_Class_Name
 
@@ -127,7 +158,33 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
             Assert.AreEqual(expected, result);
         }
 
+        [Test]
+        public void GetAttributeValue_Class_EmptyPath_AttrExist()
+        {
+            var result = typeof(TestClassEmptyPathAttr)
+                .GetAttributeValue((ConfigRetrieverPathAttribute a) => a.Path, false);
+
+            var expected = new List<string>();
+
+            Assert.AreEqual(expected, result);
+        }
+
         #endregion GetAttributeValue_Class_Path
+        
+        #region GetAttributeValue_Class_FailbackPath
+
+        [Test]
+        public void GetAttributeValue_Class_FailbackPath_AttrNotExist()
+        {
+            var result = typeof(TestClassWithoutAttr)
+                .GetAttributeValue((ConfigRetrieverFailbackPathAttribute a) => a.FailbackPath, false);
+
+            const string expected = null;
+
+            Assert.AreEqual(expected, result);
+        }
+
+        #endregion GetAttributeValue_Class_FailbackPath
 
         #region GetAttributeValue_Prop_Name
 
@@ -192,22 +249,7 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
             Assert.Throws<ArgumentException>(() => _propertyInfoWrongAttr
                 .GetAttributeValue((ConfigRetrieverPathAttribute a) => a.Path, false));
         }
-
-        #endregion GetAttributeValue_Prop_Path
-
-        #region GetAttributeValue_EmptyPath
-
-        [Test]
-        public void GetAttributeValue_Class_EmptyPath_AttrExist()
-        {
-            var result = typeof(TestClassEmptyPathAttr)
-                .GetAttributeValue((ConfigRetrieverPathAttribute a) => a.Path, false);
-
-            var expected = new List<string>();
-
-            Assert.AreEqual(expected, result);
-        }
-
+        
         [Test]
         public void GetAttributeValue_Prop_EmptyPath_AttrExist()
         {
@@ -219,7 +261,51 @@ namespace GH.DD.ConfigRetriever.Tests.Helpers
             Assert.AreEqual(expected, result);
         }
 
-        #endregion GetAttributeValue_EmptyPath
+        #endregion GetAttributeValue_Prop_Path
+        
+        #region GetAttributeValue_Prop_FailbackPath
+
+        [Test]
+        public void GetAttributeValue_Prop_FailbackPath_AttrExist()
+        {
+            var result = _propertyInfoWithAttr
+                .GetAttributeValue((ConfigRetrieverFailbackPathAttribute a) => a.FailbackPath, false);
+
+            var expected = new List<string>() {"FailbackFirstLevelPath", "FailbackSecondLevelPath"};
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void GetAttributeValue_Prop_FailbackPath_AttrNotExist()
+        {
+            var result = _propertyInfoWithoutAttr
+                .GetAttributeValue((ConfigRetrieverFailbackPathAttribute a) => a.FailbackPath, false);
+
+            const string expected = null;
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void GetAttributeValue_Prop_FailbackPath_ThrowError()
+        {
+            Assert.Throws<ArgumentException>(() => _propertyInfoWrongAttr
+                .GetAttributeValue((ConfigRetrieverFailbackPathAttribute a) => a.FailbackPath, false));
+        }
+        
+        [Test]
+        public void GetAttributeValue_Prop_EmptyFailbackPath_AttrExist()
+        {
+            var result = _propertyInfoEmptyPathAttr
+                .GetAttributeValue((ConfigRetrieverFailbackPathAttribute a) => a.FailbackPath, false);
+
+            var expected = new List<string>();
+
+            Assert.AreEqual(expected, result);
+        }
+
+        #endregion GetAttributeValue_Prop_FailbackPath
 
         #region TestData
 

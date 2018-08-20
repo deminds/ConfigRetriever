@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 
 namespace GH.DD.ConfigRetriever
 {
@@ -24,7 +24,13 @@ namespace GH.DD.ConfigRetriever
                 throw new ArgumentException($"ConfigElement field ElementType must be: string, int, long or double. ElementType is {elementType}");
             
             Paths = paths ?? throw new ArgumentNullException(nameof(paths));
+            if (Paths.Count == 0)
+                throw new ArgumentException($"Paths is empty");
+            
             PathInConfigObject = pathInConfigObject ?? throw new ArgumentNullException(nameof(pathInConfigObject));
+            if (PathInConfigObject.Count == 0)
+                throw new ArgumentException($"PathInConfigObject is empty");
+            
             ElementType = elementType;
         }
 
@@ -38,10 +44,22 @@ namespace GH.DD.ConfigRetriever
 
         public override string ToString()
         {
-            // todo: need check
-            return $"ElementType: {ElementType}, " +
-                   $"PathInConfigObject: {string.Join("/", PathInConfigObject)}, " +
-                   $"Paths: {string.Join("/", Paths.SelectMany(s => s))}";
+            var paths = new StringBuilder();
+            var i = 0;
+            var count = Paths.Count;
+            foreach (var path in Paths)
+            {
+                paths.Append("\"/");
+                paths.Append(string.Join("/", path));
+                paths.Append("\"");
+
+                if (++i != count)
+                    paths.Append(", ");
+            }
+            
+            return $"ElementType: {ElementType.Name}, " +
+                   $"PathInConfigObject: \"/{string.Join("/", PathInConfigObject)}\", " +
+                   $"Paths: [{paths}]";
         }
     }
 }
