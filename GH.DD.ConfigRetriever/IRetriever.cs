@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GH.DD.ConfigRetriever
 {
     public interface IRetriever
     {
-        bool TryRetrieve(IList<string> path, out string value);
+        Task<string> Retrieve(IList<string> path);
     }
 }

@@ -16,6 +16,7 @@ namespace GH.DD.ConfigRetriever
                              List<string> pathInConfigObject,
                              Type elementType)
         {
+            // TODO: maybe check type only in configProvider?
             if (elementType != typeof(string) &&
                 elementType != typeof(int) &&
                 elementType != typeof(long) &&

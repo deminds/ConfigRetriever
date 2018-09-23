@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace GH.DD.ConfigRetriever
 {
+    // TODO: debug mode
     public class ConfigRetriever<TItem>
         where TItem : class, new()
     {
@@ -18,7 +20,7 @@ namespace GH.DD.ConfigRetriever
             _configMapper = new ConfigMapper<TItem>();
         }
 
-        public TItem Fill()
+        public async Task<TItem> Fill()
         {
             foreach (var configElement in _walker.Walk())
             {
@@ -26,7 +28,8 @@ namespace GH.DD.ConfigRetriever
                 var configElementWasFound = false; 
                 foreach (var path in configElement.GetNextPath())
                 {
-                    if (!_retriever.TryRetrieve(path, out rawValue)) 
+                    rawValue = await _retriever.Retrieve(path);
+                    if (string.IsNullOrWhiteSpace(rawValue)) 
                         continue;
                     
                     configElementWasFound = true;
