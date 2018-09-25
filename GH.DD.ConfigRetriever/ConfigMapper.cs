@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace GH.DD.ConfigRetriever
@@ -40,16 +41,25 @@ namespace GH.DD.ConfigRetriever
             // path[1] - nested class name OR property name
 
             if (path.Count < 2)
-                throw new MemberAccessException($"Error. Try map value ({value}) by path {string.Join("/", path)}. " +
+                throw new MemberAccessException($"Error. Try map value ({value}) by path [{string.Join("/", path)}]. " +
                                                 $"Mapper must have path with count gt 2");
-            
+
             var propertyName = path[1];
             var propertyInfo = typeof(TItem).GetProperty(propertyName)
                     ?? throw new NullReferenceException($"Property: {propertyName} not found in {typeof(TItem).Name}");
             
             if (path.Count == 2)
             {
-                propertyInfo.SetValue(_config, value);
+                try
+                {
+                    propertyInfo.SetValue(_config, value);
+                }
+                catch (Exception e)
+                {
+                    throw new DataException($"Can not set value: {value} of type: {value.GetType()}" +
+                                            $" to property: {propertyName} of type: {propertyInfo.PropertyType}");
+                }
+                
                 return;
             }
 
