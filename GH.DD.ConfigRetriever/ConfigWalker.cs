@@ -7,36 +7,34 @@ using GH.DD.ConfigRetriever.Helpers;
 
 namespace GH.DD.ConfigRetriever
 {
-    // todo: mark some elements as internal
+    // TODO: mark some elements as internal
+    // TODO: comment for pubic call and methods
     public class ConfigWalker<TItem> : IConfigWalker
         where TItem : class, new()
     {
-        // paths with current TItem name
-        public List<List<string>> BasePaths { private set; get; }
-        public List<string> BasePathInConfigObject { private set; get; }
+        // All of BasePaths elements contains name of current TItem or ElementName attr as last element
+        private List<List<string>> BasePaths { set; get; }
+        // BasePathInConfigObject contains name of current TItem as last element
+        private List<string> BasePathInConfigObject { set; get; }
 
         public ConfigWalker()
         {
-            BasePaths = null;
-            BasePathInConfigObject = null;
+            CheckInputWalkType();
+            BasePaths = new List<List<string>>();
+            BasePathInConfigObject = new List<string>();
         }
 
         public ConfigWalker(List<List<string>> basePaths, List<string> basePathInConfigObject)
         {
-            if (!typeof(TItem).GetInterfaces().Contains(typeof(IConfigObject)))
-            {
-                throw new TypeAccessException(
-                    $"Type {typeof(TItem).Name} in config object not inplement interface {typeof(IConfigObject).Name}");
-            }
-
-            BasePaths = basePaths;
-            BasePathInConfigObject = basePathInConfigObject;
+            CheckInputWalkType();
+            BasePaths = basePaths ?? throw new ArgumentNullException(nameof(basePaths));
+            BasePathInConfigObject = basePathInConfigObject ?? throw new ArgumentNullException(nameof(basePathInConfigObject));
         }
 
         public IEnumerable<ConfigElement> Walk()
         {
-            var basePaths = GetBasePaths();
-            var basePathInConfigObject = GetBasePathInConfigObject();
+            UpdateBasePathsProp();
+            UpdateBasePathInConfigObjectProp();
 
             var properties = typeof(TItem)
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -53,14 +51,13 @@ namespace GH.DD.ConfigRetriever
                 if (property.HasAttribute<ConfigRetrieverIgnoreAttribute>())
                     continue;
                 
-                if (propertyType.IsGenericType && 
-                    propertyType.IsGenericTypeDefinition &&
-                    propertyType.IsInterface &&
-                    propertyType.IsEnum)
-                    continue;
+//                if (propertyType.IsGenericType || 
+//                    propertyType.IsGenericTypeDefinition ||
+//                    propertyType.IsInterface)
+//                    continue;
 
                 var nameConfigProperty = property.Name;
-                var pathInConfigObject = basePathInConfigObject.ToList();
+                var pathInConfigObject = BasePathInConfigObject.ToList();
                 pathInConfigObject.Add(nameConfigProperty);
                 
                 var name = property.Name;
@@ -78,11 +75,10 @@ namespace GH.DD.ConfigRetriever
                 }
                 else
                 {
-                    foreach (var path in basePaths)
+                    foreach (var path in BasePaths)
                     {
                         paths.Add(path.ToList());
                     }
-                    
                 }
 
                 if (property.HasAttribute<ConfigRetrieverFailbackPathAttribute>())
@@ -96,7 +92,7 @@ namespace GH.DD.ConfigRetriever
                     path.Add(name);
                 }
 
-                if (propertyType.IsPrimitive || propertyType == typeof(string))
+                if (propertyType.IsEnum || propertyType.IsPrimitive || propertyType == typeof(string))
                 {
                     yield return new ConfigElement(
                         paths: paths,
@@ -118,26 +114,39 @@ namespace GH.DD.ConfigRetriever
             }
         }
 
-        private IList<string> GetBasePathInConfigObject()
+        private void CheckInputWalkType()
+        {
+            if (typeof(TItem).IsEnum ||
+                typeof(TItem).IsGenericType ||
+                typeof(TItem).IsGenericTypeDefinition ||
+                typeof(TItem).IsInterface ||
+                typeof(TItem).IsPrimitive ||
+                typeof(TItem) == typeof(string))
+            {
+                throw new TypeAccessException(
+                    $"Type {typeof(TItem).Name} in config object is wrong type. Must be regular class");
+            }
+                
+            if (!typeof(TItem).GetInterfaces().Contains(typeof(IConfigObject)))
+            {
+                throw new TypeAccessException(
+                    $"Type {typeof(TItem).Name} in config object not inplement interface {typeof(IConfigObject).Name}");
+            }
+        }
+        
+        private void UpdateBasePathInConfigObjectProp()
         {
             if (BasePathInConfigObject != null && BasePathInConfigObject.Count > 0)
-                return BasePathInConfigObject;
+                return;
 
             var name = typeof(TItem).Name;
-            if (typeof(TItem).HasAttribute<ConfigRetrieverElementNameAttribute>())
-            {
-                name = typeof(TItem).GetAttributeValue((ConfigRetrieverElementNameAttribute a) => a.Name, true);
-            }
-
             BasePathInConfigObject = new List<string>() {name};
-
-            return BasePathInConfigObject;
         }
 
-        private List<List<string>> GetBasePaths()
+        private void UpdateBasePathsProp()
         {
             if (BasePaths != null && BasePaths.Count > 0)
-                return BasePaths;
+                return;
 
             var path = new List<string>();
             if (typeof(TItem).HasAttribute<ConfigRetrieverPathAttribute>())
@@ -153,8 +162,6 @@ namespace GH.DD.ConfigRetriever
             
             BasePaths = new List<List<string>>();
             BasePaths.Add(path);
-
-            return BasePaths;
         }
     }
 }
