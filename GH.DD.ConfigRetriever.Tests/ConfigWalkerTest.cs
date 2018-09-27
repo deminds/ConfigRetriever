@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using FluentAssertions;
 using GH.DD.ConfigRetriever.Attributes;
 using NUnit.Framework;
@@ -10,328 +14,261 @@ namespace GH.DD.ConfigRetriever.Tests
         [Test]
         public void Walk_WithoutAttr()
         {
-            var expected = new List<ConfigElement>()
-            {
-                new ConfigElement(
-                    "StringProp",
-                    "StringProp",
-                    new List<string>() {"TestClassWithoutAttr"},
-                    typeof(string),
-                    false
-                ),
-                new ConfigElement(
-                    "IntProp",
-                    "IntProp",
-                    new List<string>() {"TestClassWithoutAttr"},
-                    typeof(int),
-                    false
-                ),
-                new ConfigElement(
-                    "BoolProp",
-                    "BoolProp",
-                    new List<string>() {"TestClassWithoutAttr"},
-                    typeof(bool),
-                    false
-                ),
-            };
-
-            var walker = new ConfigWalker<TestClassWithoutAttr>();
-
-            var result = new List<ConfigElement>();
-            foreach (var elem in walker.Walk())
-            {
-                result.Add(elem);
-            }
-
-            result.Should().BeEquivalentTo(expected);
         }
         
         [Test]
         public void Walk_WithClassAttr()
         {
-            var expected = new List<ConfigElement>()
-            {
-                new ConfigElement(
-                    "StringProp",
-                    "StringProp",
-                    new List<string>() {"FirstLevelPath", "SecondLevelPath", "SomeNameTestClass"},
-                    typeof(string),
-                    false
-                ),
-                new ConfigElement(
-                    "IntProp",
-                    "IntProp",
-                    new List<string>() {"FirstLevelPath", "SecondLevelPath", "SomeNameTestClass"},
-                    typeof(int),
-                    false
-                ),
-                new ConfigElement(
-                    "BoolProp",
-                    "BoolProp",
-                    new List<string>() {"FirstLevelPath", "SecondLevelPath", "SomeNameTestClass"},
-                    typeof(bool),
-                    false
-                ),
-            };
-
-            var walker = new ConfigWalker<TestClassWithClassAttr>();
-
-            var result = new List<ConfigElement>();
-            foreach (var elem in walker.Walk())
-            {
-                result.Add(elem);
-            }
-
-            result.Should().BeEquivalentTo(expected);
         }
         
         [Test]
         public void Walk_WithClassAndPropAttr()
         {
-            var expected = new List<ConfigElement>()
-            {
-                new ConfigElement(
-                    "SomeStringProp",
-                    "StringProp",
-                    new List<string>() {"FirstLevelPath", "SecondLevelPath", "SomeNameTestClass"},
-                    typeof(string),
-                    true
-                ),
-                new ConfigElement(
-                    "SomeIntProp",
-                    "IntProp",
-                    new List<string>(),
-                    typeof(int),
-                    false
-                ),
-                new ConfigElement(
-                    "BoolProp",
-                    "BoolProp",
-                    new List<string>() {"SomeFirstLevelPath", "SomeSecondLevelPath"},
-                    typeof(bool),
-                    false
-                ),
-            };
-
-            var walker = new ConfigWalker<TestClassWithClassAndPropAttr>();
-
-            var result = new List<ConfigElement>();
-            foreach (var elem in walker.Walk())
-            {
-                result.Add(elem);
-            }
-
-            result.Should().BeEquivalentTo(expected);
         }
         
         [Test]
         public void Walk_WithPropAttr()
         {
-            var expected = new List<ConfigElement>()
-            {
-                new ConfigElement(
-                    "SomeStringProp",
-                    "StringProp",
-                    new List<string>() {"TestClassWithPropAttr"},
-                    typeof(string),
-                    true
-                ),
-                new ConfigElement(
-                    "SomeIntProp",
-                    "IntProp",
-                    new List<string>(),
-                    typeof(int),
-                    false
-                ),
-                new ConfigElement(
-                    "BoolProp",
-                    "BoolProp",
-                    new List<string>() {"SomeFirstLevelPath", "SomeSecondLevelPath"},
-                    typeof(bool),
-                    false
-                ),
-            };
-
-            var walker = new ConfigWalker<TestClassWithPropAttr>();
-
-            var result = new List<ConfigElement>();
-            foreach (var elem in walker.Walk())
-            {
-                result.Add(elem);
-            }
-
-            result.Should().BeEquivalentTo(expected);
         }
         
         [Test]
         public void Walk_WithClassNameAndPropAttr()
         {
-            var expected = new List<ConfigElement>()
-            {
-                new ConfigElement(
-                    "SomeStringProp",
-                    "StringProp",
-                    new List<string>() {"SomeNameTestClass"},
-                    typeof(string),
-                    true
-                ),
-                new ConfigElement(
-                    "SomeIntProp",
-                    "IntProp",
-                    new List<string>(),
-                    typeof(int),
-                    false
-                ),
-                new ConfigElement(
-                    "BoolProp",
-                    "BoolProp",
-                    new List<string>() {"SomeFirstLevelPath", "SomeSecondLevelPath"},
-                    typeof(bool),
-                    false
-                ),
-            };
-
-            var walker = new ConfigWalker<TestClassWithClassNameAndPropAttr>();
-
-            var result = new List<ConfigElement>();
-            foreach (var elem in walker.Walk())
-            {
-                result.Add(elem);
-            }
-
-            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void Walk_WithClassPathAndPropAttr()
         {
-            var expected = new List<ConfigElement>()
-            {
-                new ConfigElement(
-                    "SomeStringProp",
-                    "StringProp",
-                    new List<string>() {"FirstLevelPath", "SecondLevelPath", "TestClassWithClassPathAndPropAttr"},
-                    typeof(string),
-                    true
-                ),
-                new ConfigElement(
-                    "SomeIntProp",
-                    "IntProp",
-                    new List<string>(),
-                    typeof(int),
-                    false
-                ),
-                new ConfigElement(
-                    "BoolProp",
-                    "BoolProp",
-                    new List<string>() {"SomeFirstLevelPath", "SomeSecondLevelPath"},
-                    typeof(bool),
-                    false
-                ),
-            };
+        }
 
-            var walker = new ConfigWalker<TestClassWithClassPathAndPropAttr>();
-
-            var result = new List<ConfigElement>();
-            foreach (var elem in walker.Walk())
+        [Test]
+        public void Walk_ClassWithoutInterface()
+        {
+            Assert.Throws<TypeAccessException>(() =>
             {
-                result.Add(elem);
-            }
+                var configWalker = new ConfigWalker<TestClass_WithoutInterface>();
+            });
+        }
+        
+        [Test]
+        public void Walk_NestedClassWithoutInterface()
+        {
+            // TargetInvocationException instead TypeAccessException because TypeAccessException is inner exception
+            Assert.Throws<TargetInvocationException>(() =>
+            {
+                var configWalker = new ConfigWalker<TestClass_NestedClassWithoutInterface>();
+                var result = configWalker.Walk().ToList();
+            });
+        }
+
+        [Test]
+        public void Walk_ClassWithoutProps()
+        {
+            var walker = new ConfigWalker<TestClass_WithoutProps>();
+            
+            var result = walker.Walk().ToList();
+            
+            var expected = new List<ConfigElement>();
+
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void Walk_SkipWrongPropsTypes()
+        {
+            var walker = new ConfigWalker<TestClass_WithWrongPropsTypes>();
+            
+            var result = walker.Walk().ToList();
+            
+            var expected = new List<ConfigElement>();
 
             result.Should().BeEquivalentTo(expected);
         }
         
-        private class TestClassWithoutAttr
+        [Test]
+        public void Walk_GenericClass()
         {
-            public string PropPrivateGetSkip { set; private get; }
-            public string PropPrivateSetSkip { private set; get; }
-            private string PropPrivateSkip { set; get; }
-            internal string PropInternalSkip { set; get; }
+            Assert.Throws(typeof(TypeAccessException), () =>
+            {
+                var configWalker = new ConfigWalker<TestClass_Generic<string>>();
+                foreach (var configElement in configWalker.Walk())
+                {
+                    Console.WriteLine(configElement);
+                }
+            });
+        }
+        
+        [Test]
+        public void Walk_SkipPrivateProps()
+        {
+            var walker = new ConfigWalker<TestClassWithPrivateProps>();
+            
+            var result = walker.Walk().ToList();
+            
+            var expected = new List<ConfigElement>();
 
-            public string StringProp { set; get; }
-            public int IntProp { set; get; }
-            public bool BoolProp { set; get; }
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void Walk_ComplexAttrTest()
+        {
+            var walker = new ConfigWalker<TestClass1>();
+            
+            var result = walker.Walk().ToList();
+            
+            var expected = new List<ConfigElement>
+            {
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass1", "PropString" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropString" },
+                    typeof(string)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass1", "PropBool" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropBool" },
+                    typeof(bool)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass1", "TestClass1_1Name", "PropBool" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropTestClass1_1", "PropBool" },
+                    typeof(bool)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass1", "TestClass1_1Name", "PropInt" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropTestClass1_1", "PropInt" },
+                    typeof(int)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "TestClass2", "PropLong" },
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass2", "PropInt" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropTestClass2", "PropInt" },
+                    typeof(int)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "TestClass2", "PropLong" },
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass2", "PropLong" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropTestClass2", "PropLong" },
+                    typeof(long)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "TestClass3", "PropLong" },
+                        new List<string>{ "FakePathLevel0", "TestClass2", "TestClass3", "PropLong" },
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass2", "TestClass3", "PropLong" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropTestClass2", "PropTestClass3", "PropLong" },
+                    typeof(long)),
+                
+                new ConfigElement(
+                    new List<List<string>>
+                    {
+                        new List<string>{ "FakePathLevel0", "TestClass3", "PropDouble" },
+                        new List<string>{ "FakePathLevel0", "TestClass2", "TestClass3", "PropDouble" },
+                        new List<string>{ "FakePathLevel0", "FakePathLevel1", "TestClass2", "TestClass3", "PropDouble" },
+                    }, 
+                    new List<string>{ "TestClass1", "PropTestClass2", "PropTestClass3", "PropDouble" },
+                    typeof(double)),
+            };
+
+            result.Should().BeEquivalentTo(expected);
         }
         
-        [ConfigRetrieverElementName("SomeNameTestClass")]
-        [ConfigRetrieverPath("FirstLevelPath", "SecondLevelPath")]
-        private class TestClassWithClassAttr
+        private class TestClass_WithoutInterface
         {
-            public string StringProp { set; get; }
-            public int IntProp { set; get; }
-            public bool BoolProp { set; get; }
+            public string PropString { set; get; }
         }
         
-        [ConfigRetrieverElementName("SomeNameTestClass")]
-        [ConfigRetrieverPath("FirstLevelPath", "SecondLevelPath")]
-        private class TestClassWithClassAndPropAttr
+        private class TestClass_WithoutProps : IConfigObject
         {
-            [ConfigRetrieverIgnore]
-            public string StringPropSkip { set; get; }
-            
-            [ConfigRetrieverElementName("SomeStringProp")]
-            [ConfigRetrieverCanFloatUp]
-            public string StringProp { set; get; }
-            
-            [ConfigRetrieverPath]
-            [ConfigRetrieverElementName("SomeIntProp")]
-            public int IntProp { set; get; }
-            
-            [ConfigRetrieverPath("SomeFirstLevelPath", "SomeSecondLevelPath")]
-            public bool BoolProp { set; get; }
+        }
+
+        private class TestClass_NestedClassWithoutInterface : IConfigObject
+        {
+            public TestClass_WithoutInterface testProp { set; get; }
         }
         
-        private class TestClassWithPropAttr
+        private class TestClass_WithWrongPropsTypes : IConfigObject
         {
-            [ConfigRetrieverIgnore]
-            public string StringPropSkip { set; get; }
-            
-            [ConfigRetrieverElementName("SomeStringProp")]
-            [ConfigRetrieverCanFloatUp]
-            public string StringProp { set; get; }
-            
-            [ConfigRetrieverPath]
-            [ConfigRetrieverElementName("SomeIntProp")]
-            public int IntProp { set; get; }
-            
-            [ConfigRetrieverPath("SomeFirstLevelPath", "SomeSecondLevelPath")]
-            public bool BoolProp { set; get; }
+            public ITestClass PropITestClass { set; get; }
+            public TestClass_Generic<string> PropTestClassGeneric { set; get; }
         }
         
-        [ConfigRetrieverElementName("SomeNameTestClass")]
-        private class TestClassWithClassNameAndPropAttr
+        private interface ITestClass : IConfigObject
         {
-            [ConfigRetrieverIgnore]
-            public string StringPropSkip { set; get; }
-            
-            [ConfigRetrieverElementName("SomeStringProp")]
-            [ConfigRetrieverCanFloatUp]
-            public string StringProp { set; get; }
-            
-            [ConfigRetrieverPath]
-            [ConfigRetrieverElementName("SomeIntProp")]
-            public int IntProp { set; get; }
-            
-            [ConfigRetrieverPath("SomeFirstLevelPath", "SomeSecondLevelPath")]
-            public bool BoolProp { set; get; }
+            string PropString { set; get; }
         }
         
-        [ConfigRetrieverPath("FirstLevelPath", "SecondLevelPath")]
-        private class TestClassWithClassPathAndPropAttr
+        private class TestClass_Generic<T> : IConfigObject
         {
-            [ConfigRetrieverIgnore]
-            public string StringPropSkip { set; get; }
+            public string PropString { set; get; }
+        }
+
+        private class TestClassWithPrivateProps : IConfigObject
+        {
+            private string PropStringPrivate { set; get; }
+            public string PropStringPrivateSet { private set; get; }
+            public string PropStringPrivateGet { set; private get; }
+            public static string PropStringStatic { set; get; }
+        }
+        
+        [ConfigRetrieverPath("FakePathLevel0", "FakePathLevel1")]
+        private class TestClass1 : IConfigObject
+        {
+            public string PropString { set; get; }
+            public bool PropBool { set; get; }
             
-            [ConfigRetrieverElementName("SomeStringProp")]
-            [ConfigRetrieverCanFloatUp]
-            public string StringProp { set; get; }
+            [ConfigRetrieverElementName("TestClass1_1Name")]
+            public TestClass1_1 PropTestClass1_1 { set; get; }
             
-            [ConfigRetrieverPath]
-            [ConfigRetrieverElementName("SomeIntProp")]
-            public int IntProp { set; get; }
+            [ConfigRetrieverPath("FakePathLevel0", "FakePathLevel1")]
+            [ConfigRetrieverFailbackPath("FakePathLevel0")]
+            public TestClass2 PropTestClass2 { set; get; }
+        }
+
+        // attribute must ignore
+        [ConfigRetrieverPath("FakePathLevel0", "FakePathLevel1")]
+        private class TestClass1_1 : IConfigObject
+        {
+            public bool PropBool { set; get; }
+            public int PropInt { set; get; }
+        }
+
+        // attribute must ignore
+        [ConfigRetrieverElementName("FakeName")]
+        private class TestClass2 : IConfigObject
+        {
+            public int PropInt { set; get; }
+            public long PropLong { set; get; }
             
-            [ConfigRetrieverPath("SomeFirstLevelPath", "SomeSecondLevelPath")]
-            public bool BoolProp { set; get; }
+            [ConfigRetrieverFailbackPath("FakePathLevel0")]
+            [ConfigRetrieverElementName("TestClass3")]
+            public TestClass3 PropTestClass3 { set; get; }
+        }
+
+        private class TestClass3 : IConfigObject
+        {
+            public long PropLong { set; get; }
+            public double PropDouble { set; get; }
         }
     }
 }
