@@ -34,7 +34,6 @@ namespace GH.DD.ConfigRetriever.Tests
         [Test]
         public void Map_Simple_WrongTypeProperty_Exception()
         {
-            var value = "some value";
             var fakeValue = 10;
             var configMapper = new ConfigMapper<ClassSimple>();
             

@@ -54,7 +54,7 @@ namespace GH.DD.ConfigRetriever
                 {
                     propertyInfo.SetValue(_config, value);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new DataException($"Can not set value: {value} of type: {value.GetType()}" +
                                             $" to property: {propertyName} of type: {propertyInfo.PropertyType}");
