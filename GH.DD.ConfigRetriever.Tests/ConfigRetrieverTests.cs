@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace GH.DD.ConfigRetriever.Tests
 {
-    public class ConfigRetrieverTest
+    public class ConfigRetrieverTests
     {
         [Test]
         public void Fill_AvailableInRetriever()

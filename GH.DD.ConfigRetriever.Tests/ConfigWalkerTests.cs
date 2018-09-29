@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace GH.DD.ConfigRetriever.Tests
 {
-    public class ConfigWalkerTest
+    public class ConfigWalkerTests
     {
         [Test]
         public void Walk_ClassWithoutInterface()

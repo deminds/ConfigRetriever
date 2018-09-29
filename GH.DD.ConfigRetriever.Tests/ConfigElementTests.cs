@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace GH.DD.ConfigRetriever.Tests
 {
-    public class ConfigElementTest
+    public class ConfigElementTests
     {
         private List<List<string>> _path0 = new List<List<string>>();
         
