@@ -17,18 +17,18 @@ namespace GH.DD.ConfigRetriever.Retrievers
 
         private HttpClient _httpClient;
         
-        public ConsulRetriever(string httpScema, string host, int port, string aclToken)
+        public ConsulRetriever(string httpSchema, string host, int port, string aclToken)
         {
-            if (httpScema != "http" || httpScema != "https")
-                throw new ArgumentException(nameof(httpScema));
+            if (httpSchema != "http" && httpSchema != "https")
+                throw new ArgumentException(nameof(httpSchema));
             
-            if (!string.IsNullOrWhiteSpace(host))
+            if (string.IsNullOrWhiteSpace(host))
                 throw new ArgumentException(nameof(host));
 
             if (port < IPEndPoint.MinPort || port >= IPEndPoint.MaxPort)
                 throw new ArgumentException(nameof(port));
 
-            _httpSchema = httpScema;
+            _httpSchema = httpSchema;
             _host = host;
             _port = port;
 
@@ -49,22 +49,26 @@ namespace GH.DD.ConfigRetriever.Retrievers
 
                 var responseJsonRaw = await response.Content.ReadAsStringAsync();
                 var responseJson = ParseResponseJson(responseJsonRaw);
-                var result = Base64Decode(responseJson.Value);
+                if (responseJson.Count != 1)
+                    throw new DataException($"Received response from consul with count of objects != 1. " +
+                                            $"Count: {responseJson.Count}. Response raw: {responseJsonRaw}");
+                
+                var result = Base64Decode(responseJson[0].Value);
 
                 return result;
             }
         }
 
-        private ConsulResponseObject ParseResponseJson(string jsonRaw)
+        private List<ConsulResponseObject> ParseResponseJson(string jsonRaw)
         {
-            ConsulResponseObject result;
+            List<ConsulResponseObject> result;
             try
             {
-                result = JsonConvert.DeserializeObject<ConsulResponseObject>(jsonRaw);
+                result = JsonConvert.DeserializeObject<List<ConsulResponseObject>>(jsonRaw);
             }
             catch (Exception e)
             {
-                throw new DataException($"Parse consul response json error", e);
+                throw new DataException($"Parse consul response json error. Raw JSON: {jsonRaw}. Error: {e}", e);
             }
 
             return result;

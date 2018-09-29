@@ -21,5 +21,11 @@ namespace GH.DD.ConfigRetriever.Retrievers
         
         [JsonProperty("ModifyIndex")]
         public int ModifyIndex;
+
+        public override string ToString()
+        {
+            return $"{{ LockIndex: {LockIndex}, Key: {Key}, Flags: {Flags}, " +
+                   $"Value: {Value}, CreateIndex: {CreateIndex}, ModifyIndex: {ModifyIndex}}}";
+        }
     }
 }
