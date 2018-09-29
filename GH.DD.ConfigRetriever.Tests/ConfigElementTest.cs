@@ -84,7 +84,7 @@ namespace GH.DD.ConfigRetriever.Tests
         }
         
         [Test]
-        public void ElementType_Float()
+        public void ElementType_UnsupportedElementType()
         {
             Assert.Throws(typeof(ArgumentException), 
                 () => new ConfigElement(_path1, _path_in_config, typeof(float)));

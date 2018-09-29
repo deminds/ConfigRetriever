@@ -19,14 +19,14 @@ namespace GH.DD.ConfigRetriever
 
         public ConfigWalker()
         {
-            CheckInputWalkType();
+            CheckWalkType(typeof(TItem));
             BasePaths = new List<List<string>>();
             BasePathInConfigObject = new List<string>();
         }
 
         public ConfigWalker(List<List<string>> basePaths, List<string> basePathInConfigObject)
         {
-            CheckInputWalkType();
+            CheckWalkType(typeof(TItem));
             BasePaths = basePaths ?? throw new ArgumentNullException(nameof(basePaths));
             BasePathInConfigObject = basePathInConfigObject ?? throw new ArgumentNullException(nameof(basePathInConfigObject));
         }
@@ -102,6 +102,9 @@ namespace GH.DD.ConfigRetriever
                 else
                 {
                     var typeArgs = new[] {propertyType};
+                    
+                    CheckWalkType(propertyType);
+                    
                     var configWalkerType = typeof(ConfigWalker<>).MakeGenericType(typeArgs);
 
                     var configWalker = (IConfigWalker) Activator.CreateInstance(configWalkerType, new object[]{paths, pathInConfigObject});
@@ -114,23 +117,23 @@ namespace GH.DD.ConfigRetriever
             }
         }
 
-        private void CheckInputWalkType()
+        private void CheckWalkType(Type type)
         {
-            if (typeof(TItem).IsEnum ||
-                typeof(TItem).IsGenericType ||
-                typeof(TItem).IsGenericTypeDefinition ||
-                typeof(TItem).IsInterface ||
-                typeof(TItem).IsPrimitive ||
-                typeof(TItem) == typeof(string))
+            if (type.IsEnum ||
+                type.IsGenericType ||
+                type.IsGenericTypeDefinition ||
+                type.IsInterface ||
+                type.IsPrimitive ||
+                type == typeof(string))
             {
                 throw new TypeAccessException(
-                    $"Type {typeof(TItem).Name} in config object is wrong type. Must be regular class");
+                    $"Type {type.Name} in config object is wrong type. Must be regular class");
             }
                 
-            if (!typeof(TItem).GetInterfaces().Contains(typeof(IConfigObject)))
+            if (!type.GetInterfaces().Contains(typeof(IConfigObject)))
             {
                 throw new TypeAccessException(
-                    $"Type {typeof(TItem).Name} in config object not inplement interface {typeof(IConfigObject).Name}");
+                    $"Type {type.Name} in config object not inplement interface {typeof(IConfigObject).Name}");
             }
         }
         
@@ -140,7 +143,10 @@ namespace GH.DD.ConfigRetriever
                 return;
 
             var name = typeof(TItem).Name;
-            BasePathInConfigObject = new List<string>() {name};
+            BasePathInConfigObject = new List<string>
+            {
+                name
+            };
         }
 
         private void UpdateBasePathsProp()
