@@ -114,6 +114,36 @@ namespace GH.DD.ConfigRetriever.Tests
         }
         
         [Test]
+        public void Walk_ClassWithEmptyPathAttr()
+        {
+            var walker = new ConfigWalker<TestClass_ClassWithEmptyPathAttr>();
+            
+            var result = walker.Walk().ToList();
+            
+            var expected = new List<ConfigElement>
+            {
+                new ConfigElement(
+                    paths: new List<List<string>>
+                    {
+                        new List<string>
+                        {
+                            "TestClass_ClassWithEmptyPathAttr",
+                            "PropBool",
+                        },
+                    },
+                    pathInConfigObject: new List<string>
+                    {
+                        "TestClass_ClassWithEmptyPathAttr",
+                        "PropBool",
+                    },
+                    elementType: typeof(bool)
+                 ),
+            };
+
+            result.Should().BeEquivalentTo(expected);
+        }
+        
+        [Test]
         public void Walk_ClassWithPathAttr()
         {
             var walker = new ConfigWalker<TestClass_ClassWithPathAttr>();
@@ -498,6 +528,12 @@ namespace GH.DD.ConfigRetriever.Tests
         private class TestClass_WithoutAttr : IConfigObject
         {
             public string PropString { set; get; }
+        }
+        
+        [ConfigRetrieverPath()]
+        private class TestClass_ClassWithEmptyPathAttr : IConfigObject
+        {
+            public bool PropBool { set; get; }
         }
 
         [ConfigRetrieverPath("FakePathLevel0", "FakePathLevel1")]
