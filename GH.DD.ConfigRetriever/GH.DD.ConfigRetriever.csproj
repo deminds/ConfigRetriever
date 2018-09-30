@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.0.1</Version>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <authors>deminds</authors>
+    <PackageId>GH.DD.ConfigRetriever</PackageId>
+    <PackageProjectUrl>https://github.com/deminds/ConfigRetriever</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/deminds/ConfigRetriever/master/LICENSE</PackageLicenseUrl>
+    <Title>GH.DD.ConfigRetriever</Title>
+    <Description>Retrieve and fill out you config object from the Consul</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+</Project>

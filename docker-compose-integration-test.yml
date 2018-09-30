@@ -1,0 +1,20 @@
+version: "3"
+services:
+  gh.dd.configretriever.tests:
+    build:
+      context: ./
+      dockerfile: Dockerfile-integration-test
+    depends_on:
+      - consul
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+    networks: 
+      - gh.dd.configretriever_network
+  
+  consul:
+    image: consul:latest
+    networks: 
+      - gh.dd.configretriever_network
+      
+networks: 
+  gh.dd.configretriever_network:

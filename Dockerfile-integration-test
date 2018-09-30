@@ -1,0 +1,11 @@
+FROM microsoft/dotnet:2.1-sdk
+
+ADD . /GH.DD.ConfigRetriever
+
+WORKDIR /GH.DD.ConfigRetriever
+
+CMD sleep 10 && \
+ chmod a+x fill_consul_integration_test.sh && \ 
+ ./fill_consul_integration_test.sh && \
+ dotnet restore && \
+ dotnet test --filter TestCategory=integration *.Tests/
