@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 namespace GH.DD.ConfigRetriever
 {
     // TODO: debug mode
+    // TODO: create extensions for easy run and get consul url from env
     public class ConfigRetriever<TItem>
         where TItem : class, new()
     {

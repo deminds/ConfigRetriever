@@ -17,6 +17,7 @@ namespace GH.DD.ConfigRetriever.Retrievers
 
         private HttpClient _httpClient;
         
+        // TODO: create constructor with raw url
         public ConsulRetriever(string httpSchema, string host, int port, string aclToken)
         {
             if (httpSchema != "http" && httpSchema != "https")
@@ -64,6 +65,7 @@ namespace GH.DD.ConfigRetriever.Retrievers
             List<ConsulResponseObject> result;
             try
             {
+                // TODO: use native tools for parse json
                 result = JsonConvert.DeserializeObject<List<ConsulResponseObject>>(jsonRaw);
             }
             catch (Exception e)
