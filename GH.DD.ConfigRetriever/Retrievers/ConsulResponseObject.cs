@@ -1,25 +1,26 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
 
 namespace GH.DD.ConfigRetriever.Retrievers
 {
+    [DataContract]
     internal class ConsulResponseObject
     {
-        [JsonProperty("LockIndex")]
+        [DataMember(Name = "LockIndex")]
         internal int LockIndex;
         
-        [JsonProperty("Key")]
+        [DataMember(Name = "Key")]
         internal string Key;
         
-        [JsonProperty("Flags")]
+        [DataMember(Name = "Flags")]
         internal int Flags;
         
-        [JsonProperty("Value")]
+        [DataMember(Name = "Value")]
         internal string Value;
         
-        [JsonProperty("CreateIndex")]
+        [DataMember(Name = "CreateIndex")]
         internal int CreateIndex;
         
-        [JsonProperty("ModifyIndex")]
+        [DataMember(Name = "ModifyIndex")]
         internal int ModifyIndex;
 
         public override string ToString()
