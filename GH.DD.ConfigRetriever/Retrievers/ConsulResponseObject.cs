@@ -2,25 +2,25 @@
 
 namespace GH.DD.ConfigRetriever.Retrievers
 {
-    public class ConsulResponseObject
+    internal class ConsulResponseObject
     {
         [JsonProperty("LockIndex")]
-        public int LockIndex;
+        internal int LockIndex;
         
         [JsonProperty("Key")]
-        public string Key;
+        internal string Key;
         
         [JsonProperty("Flags")]
-        public int Flags;
+        internal int Flags;
         
         [JsonProperty("Value")]
-        public string Value;
+        internal string Value;
         
         [JsonProperty("CreateIndex")]
-        public int CreateIndex;
+        internal int CreateIndex;
         
         [JsonProperty("ModifyIndex")]
-        public int ModifyIndex;
+        internal int ModifyIndex;
 
         public override string ToString()
         {

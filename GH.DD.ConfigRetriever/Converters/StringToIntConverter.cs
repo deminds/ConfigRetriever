@@ -2,7 +2,7 @@
 
 namespace GH.DD.ConfigRetriever.Converters
 {
-    public class StringToIntConverter : IConverter
+    internal class StringToIntConverter : IConverter
     {
         public object Convert(string rawValue)
         {

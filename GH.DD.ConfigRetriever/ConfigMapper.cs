@@ -5,20 +5,33 @@ using System.Linq;
 
 namespace GH.DD.ConfigRetriever
 {
+    /// <summary>
+    /// Class for recursively map value to config object
+    /// </summary>
+    /// <typeparam name="TItem">Type of config object</typeparam>
     public class ConfigMapper<TItem> : IConfigMapper 
         where TItem : class, new()
     {
         private TItem _config;
         
-        // Dictionary propertyName on ConfigMapper
+        /// <summary>
+        /// Dictionary propertyName on ConfigMapper
+        /// </summary>
         private Dictionary<string, IConfigMapper> _children;
 
+        /// <summary>
+        /// Constructor for <see cref="ConfigMapper{TItem}"/>
+        /// </summary>
         public ConfigMapper()
         {
             _config = new TItem();
             _children = new Dictionary<string, IConfigMapper>();
         }
 
+        /// <summary>
+        /// Get instance of config object filled by mapped values
+        /// </summary>
+        /// <returns>Instance of config object</returns>
         public object GetResultObject()
         {
             foreach (var child in _children)
@@ -35,6 +48,12 @@ namespace GH.DD.ConfigRetriever
             return _config;
         }
 
+        /// <summary>
+        /// Map value to config object
+        /// </summary>
+        /// <param name="path">Path to element in config object <see cref="List{string}"/></param>
+        /// <param name="value">Value of config object</param>
+        /// <exception cref="Exception">Need catch exceptions</exception>
         public void Map(List<string> path, object value)
         {
             // path[0] - TItem name

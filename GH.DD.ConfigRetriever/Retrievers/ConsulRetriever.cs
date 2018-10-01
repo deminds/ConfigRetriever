@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 
 namespace GH.DD.ConfigRetriever.Retrievers
 {
+    /// <summary>
+    /// Class for retrieve data from Consul parse it and return string value
+    /// </summary>
     public class ConsulRetriever : IRetriever
     {
         private readonly string _httpSchema;
@@ -18,6 +21,14 @@ namespace GH.DD.ConfigRetriever.Retrievers
         private HttpClient _httpClient;
         
         // TODO: create constructor with raw url
+        /// <summary>
+        /// Constructor for <see cref="ConsulRetriever"/>
+        /// </summary>
+        /// <param name="httpSchema">Consul http schema (HTTP or HTTPS)</param>
+        /// <param name="host">Consul host</param>
+        /// <param name="port">Consul port</param>
+        /// <param name="aclToken">Consul ACL tocken. Not required</param>
+        /// <exception cref="Exception">Need catch exceptions</exception>
         public ConsulRetriever(string httpSchema, string host, int port, string aclToken)
         {
             if (httpSchema != "http" && httpSchema != "https")
@@ -39,6 +50,12 @@ namespace GH.DD.ConfigRetriever.Retrievers
                 _httpClient.DefaultRequestHeaders.Add("X-Consul-Token", aclToken);
         }
 
+        /// <summary>
+        /// Retrieve data from Consul via http
+        /// </summary>
+        /// <param name="path">Path to Consul data in key/value store. <see cref="IList{string}"/></param>
+        /// <returns>Consul data value</returns>
+        /// <exception cref="Exception">Need catch exceptions</exception>
         public async Task<string> Retrieve(IList<string> path)
         {
             var url = $"{_httpSchema}://{_host}:{_port}/v1/kv/{string.Join("/", path)}";

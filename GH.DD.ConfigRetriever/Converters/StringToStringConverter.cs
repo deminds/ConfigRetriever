@@ -1,6 +1,6 @@
 ﻿namespace GH.DD.ConfigRetriever.Converters
 {
-    public class StringToStringConverter : IConverter
+    internal class StringToStringConverter : IConverter
     {
         public object Convert(string rawValue)
         {

@@ -5,6 +5,10 @@ namespace GH.DD.ConfigRetriever
 {
     // TODO: debug mode
     // TODO: create extensions for easy run and get consul url from env
+    /// <summary>
+    /// Class for retrieve you config from config system (for example Consul) and map it on you config object 
+    /// </summary>
+    /// <typeparam name="TItem">Type of you config object</typeparam>
     public class ConfigRetriever<TItem>
         where TItem : class, new()
     {
@@ -13,6 +17,13 @@ namespace GH.DD.ConfigRetriever
         private ConvertProvider _convertProvider;
         private IConfigMapper _configMapper;
         
+        /// <summary>
+        /// Main constructor for ConfigRetriever
+        /// </summary>
+        /// <param name="retriever"><see cref="IRetriever"/>
+        /// Interface for retrieve data from configuration system.
+        /// Usualy <see cref="GH.DD.ConfigRetriever.Retrievers.ConsulRetriever"/>
+        /// for retrieve from Consul</param>
         public ConfigRetriever(IRetriever retriever)
         {
             _retriever = retriever ?? throw new ArgumentNullException(nameof(retriever));
@@ -21,6 +32,11 @@ namespace GH.DD.ConfigRetriever
             _configMapper = new ConfigMapper<TItem>();
         }
 
+        /// <summary>
+        /// Fill out config object
+        /// </summary>
+        /// <returns>Filled config object of type <see cref="TItem"/></returns>
+        /// <exception cref="Exception">Need catch exceptions</exception>
         public async Task<TItem> Fill()
         {
             foreach (var configElement in _walker.Walk())

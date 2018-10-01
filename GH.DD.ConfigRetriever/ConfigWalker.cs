@@ -7,16 +7,29 @@ using GH.DD.ConfigRetriever.Helpers;
 
 namespace GH.DD.ConfigRetriever
 {
-    // TODO: mark some elements as internal
-    // TODO: comment for pubic call and methods
+    /// <summary>
+    /// Class for recursivly walk via config object and generate <see cref="ConfigElement"/> for each value
+    /// </summary>
+    /// <typeparam name="TItem">Type of config object</typeparam>
     public class ConfigWalker<TItem> : IConfigWalker
         where TItem : class, new()
     {
-        // All of BasePaths elements contains name of current TItem or ElementName attr as last element
+        /// <summary>
+        /// Paths to config element in Consul witout property name
+        /// All of BasePaths elements contains name of current TItem or ElementName attr as last element
+        /// </summary>
         private List<List<string>> BasePaths { set; get; }
-        // BasePathInConfigObject contains name of current TItem as last element
+        
+        /// <summary>
+        /// Paths to config element if config object without property name
+        /// BasePathInConfigObject contains name of current TItem as last element
+        /// </summary>
         private List<string> BasePathInConfigObject { set; get; }
 
+        /// <summary>
+        /// Constructor of <see cref="ConfigWalker{TItem}"/>
+        /// With set empty value to BasePaths and BasePathInConfigObject
+        /// </summary>
         public ConfigWalker()
         {
             CheckWalkType(typeof(TItem));
@@ -24,6 +37,17 @@ namespace GH.DD.ConfigRetriever
             BasePathInConfigObject = new List<string>();
         }
 
+        /// <summary>
+        /// Constructor of <see cref="ConfigWalker{TItem}"/>
+        /// </summary>
+        /// <param name="basePaths">
+        /// Paths to config element in Consul witout property name
+        /// Property name will add there
+        /// </param>
+        /// <param name="basePathInConfigObject">
+        /// Paths to config element if config object without property name
+        /// Property name will add there
+        /// </param>
         public ConfigWalker(List<List<string>> basePaths, List<string> basePathInConfigObject)
         {
             CheckWalkType(typeof(TItem));
@@ -31,6 +55,10 @@ namespace GH.DD.ConfigRetriever
             BasePathInConfigObject = basePathInConfigObject ?? throw new ArgumentNullException(nameof(basePathInConfigObject));
         }
 
+        /// <summary>
+        /// Enumenator for analisys config object
+        /// </summary>
+        /// <returns><see cref="ConfigElement"/></returns>
         public IEnumerable<ConfigElement> Walk()
         {
             UpdateBasePathsProp();
@@ -51,11 +79,6 @@ namespace GH.DD.ConfigRetriever
                 if (property.HasAttribute<ConfigRetrieverIgnoreAttribute>())
                     continue;
                 
-//                if (propertyType.IsGenericType || 
-//                    propertyType.IsGenericTypeDefinition ||
-//                    propertyType.IsInterface)
-//                    continue;
-
                 var nameConfigProperty = property.Name;
                 var pathInConfigObject = BasePathInConfigObject.ToList();
                 pathInConfigObject.Add(nameConfigProperty);

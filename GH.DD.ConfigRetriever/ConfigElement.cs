@@ -4,14 +4,40 @@ using System.Text;
 
 namespace GH.DD.ConfigRetriever
 {
+    /// <summary>
+    /// Element of config
+    /// Is parsed from you config class by <see cref="ConfigWalker{TItem}"/>
+    /// </summary>
     public class ConfigElement
     {
-        // last element is name
-        // higher index - higher priority
-        public List<List<string>> Paths { private set; get; }
-        public List<string> PathInConfigObject { private set; get; }
-        public Type ElementType { private set; get; }
+        /// <summary>
+        /// Paths to config element in Consul
+        /// last element is element name
+        /// higher index - higher priority
+        /// </summary>
+        internal List<List<string>> Paths { get; }
+        
+        /// <summary>
+        /// Path to config element in config class
+        /// </summary>
+        internal List<string> PathInConfigObject { get; }
+        
+        /// <summary>
+        /// Type of config element
+        /// </summary>
+        internal Type ElementType { get; }
 
+        /// <summary>
+        /// Constructor for <see cref="ConfigElement"/>
+        /// </summary>
+        /// <param name="paths">
+        /// Paths to config element in Consul
+        /// last element is element name
+        /// higher index - higher priority
+        /// </param>
+        /// <param name="pathInConfigObject">Path to config element in config class</param>
+        /// <param name="elementType">Type of config element in config object</param>
+        /// <exception cref="Exception">Need catch exceptions</exception>
         public ConfigElement(List<List<string>> paths, 
                              List<string> pathInConfigObject,
                              Type elementType)
@@ -35,6 +61,10 @@ namespace GH.DD.ConfigRetriever
             ElementType = elementType;
         }
 
+        /// <summary>
+        /// Enumenator for retun path for retrieve config element value from Consul in specific priorty
+        /// </summary>
+        /// <returns>Enumenator for <see cref="List{string}"/></returns>
         public IEnumerable<List<string>> GetNextPath()
         {
             for (var i = Paths.Count - 1; i >= 0; i--)
@@ -43,6 +73,10 @@ namespace GH.DD.ConfigRetriever
             }
         }
 
+        /// <summary>
+        /// Stringify information about config element
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             var paths = new StringBuilder();
