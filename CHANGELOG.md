@@ -1,3 +1,8 @@
+## 0.0.4 (2018-10-03)
+
+- Remove Newtonsoft.Json from csproj
+- Add integration test with use ConsulRetriever constructor with manual url
+
 ## 0.0.3 (2018-10-02)
 
 - ConsulRetriever replace Newtonsoft.Json to System.Runtime.Serialization

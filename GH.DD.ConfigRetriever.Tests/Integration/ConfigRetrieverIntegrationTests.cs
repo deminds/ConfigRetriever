@@ -14,9 +14,41 @@ namespace GH.DD.ConfigRetriever.Tests.Integration
         private const string ConsulAclToken = "";
         
         [Test]
-        public void ConfigRetriever_Integration()
+        public void ConfigRetriever_ManualWithUrlInParts()
         {
             var retriever = new ConsulRetriever(ConsulHttpSchema, ConsulHost, ConsulPort, ConsulAclToken);
+            var configRetriever = new ConfigRetriever<TestClass1>(retriever);
+
+            var resultTask = configRetriever.Fill();
+            var result = resultTask.Result;
+                
+            var expected = new TestClass1()
+            {
+                PropTestClass1_1 = new TestClass1_1()
+                {
+                    PropInt = 10,
+                    PropDouble = 10.10
+                },
+                PropTestClass2 = new TestClass2()
+                {
+                    PropString = "some string",
+                    PropTestClass3 = new TestClass3()
+                    {
+                        PropBool = true,
+                        PropLong = 1000,
+                        PropString = "some string"
+                    }
+                }
+            };
+            
+            result.Should().BeEquivalentTo(expected);
+        }
+        
+        [Test]
+        public void ConfigRetriever_ManualWithUrl()
+        {
+            var url = $"{ConsulHttpSchema}://{ConsulHost}:{ConsulPort}";
+            var retriever = new ConsulRetriever(url, ConsulAclToken);
             var configRetriever = new ConfigRetriever<TestClass1>(retriever);
 
             var resultTask = configRetriever.Fill();
