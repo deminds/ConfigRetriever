@@ -1,3 +1,9 @@
+## 0.0.5 (2018-10-03)
+
+- Add feature Debug via ILogger
+- Add ILogger, StubLogger, StdoutLogger
+- Update README
+
 ## 0.0.4 (2018-10-03)
 
 - Remove Newtonsoft.Json from csproj

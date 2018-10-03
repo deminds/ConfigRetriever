@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GH.DD.ConfigRetriever.Attributes;
+using GH.DD.ConfigRetriever.Loggers;
 using GH.DD.ConfigRetriever.Retrievers;
 using NUnit.Framework;
 
@@ -49,7 +50,8 @@ namespace GH.DD.ConfigRetriever.Tests.Integration
         {
             var url = $"{ConsulHttpSchema}://{ConsulHost}:{ConsulPort}";
             var retriever = new ConsulRetriever(url, ConsulAclToken);
-            var configRetriever = new ConfigRetriever<TestClass1>(retriever);
+            var logger = new StdoutLogger();
+            var configRetriever = new ConfigRetriever<TestClass1>(retriever, logger);
 
             var resultTask = configRetriever.Fill();
             var result = resultTask.Result;

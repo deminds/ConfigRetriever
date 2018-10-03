@@ -47,7 +47,7 @@ private class TestClass2 : IConfigObject
 
 ### Code for fill config object from Consul
 ```c#
-var retriever = new ConsulRetriever("http", "localhost", 8500, null);
+var retriever = new ConsulRetriever("http://localhost:8500", null);
 var configRetriever = new ConfigRetriever<TestClass1>(retriever);
 
 var result = await configRetriever.Fill();
@@ -107,23 +107,6 @@ private class TestClass3 : IConfigObject
 }
 ```
 
-### Fill Consul
-##### Run Consul in docker
-```shell
-sudo docker run --rm --name consul -p 8500:8500 consul:latest
-```
-##### Fill Consul
-```shell
-export CONSUL_HTTP_ADDR=localhost:8500
-
-curl --request PUT --data "10" http://$CONSUL_HTTP_ADDR/v1/kv/FakePath0/FakePath1/TestClass1/PropTestClass1_1_FakeName/PropInt
-curl --request PUT --data "10.10" http://$CONSUL_HTTP_ADDR/v1/kv/FakePath0/FakePath1/TestClass1/PropTestClass1_1_FakeName/PropDoubleFakeName
-curl --request PUT --data "some string" http://$CONSUL_HTTP_ADDR/v1/kv/FakePath0/FakePath1/PropTestClass2/PropString
-curl --request PUT --data "true" http://$CONSUL_HTTP_ADDR/v1/kv/FakePath0/PropTestClass3/PropBool
-curl --request PUT --data "some string" http://$CONSUL_HTTP_ADDR/v1/kv/FakePath0/PropTestClass3/PropString
-curl --request PUT --data "1000" http://$CONSUL_HTTP_ADDR/v1/kv/PropLongFakeName
-```
-
 ##### Result (immitation)
 ```c#
 var result = new TestClass1()
@@ -165,6 +148,23 @@ var result = new TestClass1()
   3. _FakePath0 / PropTestClass3 / PropLongFakeName_
   4. _PropLongFakeName_
 
+# Debug
+You can enable debug mode. Via logger `ILogger`.  
+This is two loggers:
+* `StubLogger` - default logger. Do nothing
+* `StdoutLogger` - write to stdout
+
+You can define you own logger. Just implement `ILogger` interface.
+
+### Example debug mode
+```c#
+var retriever = new ConsulRetriever("http://localhost:8500", null);
+
+var logger = new StdoutLogger();
+var configRetriever = new ConfigRetriever<TestClass1>(retriever, logger);
+
+var result = await configRetriever.Fill();
+```
 
 # Enhansment
 You can implement `IRetriever` for other config systems.  
@@ -173,5 +173,6 @@ You can implement `IRetriever` for other config systems.
 * This tool work on `property` level. If you have `ConfigRetrieverFailbackPath` attribute on you nested class and some of props that class will find in base path in Consul but rest props will not set in Consul by base path then that props will get in Consul `FailbackPath`.
 * You can define attributes `ConfigRetrieverElementName` and `ConfigRetrieverPath` for class. But only for you root class. For nested classes it will ignore. For nested classes use that attributes on property.
 * Every you configuration class must implement interface `IConfigObject`. Nested classes also must implement that interface.
+* For `ConsulRetriever` in `url` param must contain http schema type (`http` / `https`)
 
 ## Feel free for open any issues
